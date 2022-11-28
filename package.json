@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/JonixB/tinyapp/issues"
   },
-  "homepage": "https://github.com/JonixB/tinyapp#readme"
+  "homepage": "https://github.com/JonixB/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
