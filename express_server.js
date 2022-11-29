@@ -9,6 +9,15 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const generateRandomString = () => {
+  const possibleChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let RandomString = '';
+  for (let x = 0; x < 6; x++) {
+    RandomString += possibleChars[Math.floor(Math.random() * 62)];
+  }
+  return RandomString;
+};
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
