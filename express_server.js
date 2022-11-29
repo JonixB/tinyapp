@@ -47,6 +47,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+  delete urlDatabase[id];
+  res.redirect(`/urls/`);
+});
+
 app.get("/urls/:id", (req, res) => {
   const long = urlDatabase[req.params.id];
   const templateVars = { id: req.params.id, longURL: long };
