@@ -68,6 +68,11 @@ app.post("/login", (req, res) => {
   res.redirect(`/urls`);
 });
 
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect(`/urls`);
+});
+
 app.get("/urls/:id", (req, res) => {
   const long = urlDatabase[req.params.id];
   const templateVars = { id: req.params.id, longURL: long, username: req.cookies['username'] };
