@@ -23,11 +23,10 @@ const generateRandomString = () => {
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  if(!req.cookies['username']) {
+    res.redirect(`/urls`);
+  }
+  res.redirect(`/login`);
 });
 
 app.get("/hello", (req, res) => {
