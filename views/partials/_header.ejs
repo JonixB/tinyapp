@@ -19,16 +19,22 @@
       </div>
     </div>
 
-    <form class="form-inline" action="/login" method="POST">
-      <label for="username">Username</label>
-      <input
-        class="form-control"
-        type="text"
-        name="username"
-        style="width: 300px; margin: 1em"
-      />
-      <button type="submit" class="btn btn-primary" style="background-color:transparent; border-color: black;">Sign In</button>
-  </form>
-
+    <% if(username !== undefined && username !== '') { %>
+      <form class="form-inline" action="/logout" method="POST">
+        <h4>Logged in as: <%= username %></h4>
+        <button type="submit" class="btn btn-primary" style="background-color:transparent; border-color: black;">Logout</button>
+      </form>
+    <% } else { %>
+      <form class="form-inline" action="/login" method="POST">
+        <label for="username">Username</label>
+        <input
+          class="form-control"
+          type="text"
+          name="username"
+          style="width: 300px; margin: 1em"
+        />
+        <button type="submit" class="btn btn-primary" style="background-color:transparent; border-color: black;">Sign In</button>
+    </form>
+    <% } %>
   </nav>
 </header>
