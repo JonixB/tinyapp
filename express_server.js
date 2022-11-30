@@ -33,6 +33,15 @@ const generateRandomString = () => {
   return RandomString;
 };
 
+const getUserByEmail = (email) => {
+  for (const user in users) {
+    if (email === users[user].email) {
+      return users[user];
+    }
+  }
+  return null;
+};
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -53,7 +62,6 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  console.log(users[req.cookies['user_id']]);
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render("urls_register", templateVars);
 });
@@ -62,6 +70,15 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
+  if (email === '' || password === '') {
+    res.statusMessage = "Email or password cannot be empty";
+    res.status(400).end();
+  }
+
+  if (getUserByEmail(email) !== null) {
+    res.statusMessage = "Email is already in use. Please type a different email";
+    res.status(400).end();
+  }
   users[id] = { id: id, email: email, password: password };
 
   res.cookie('user_id', id);
