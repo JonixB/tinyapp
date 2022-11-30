@@ -65,7 +65,7 @@ app.post("/register", (req, res) => {
   users[id] = { id: id, email: email, password: password };
 
   res.cookie('user_id', id);
-  res.redirect("/urls", templateVars);
+  res.redirect("/urls");
 });
 
 app.post("/urls", (req, res) => {
@@ -92,7 +92,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(`/urls`);
 });
 
