@@ -44,10 +44,15 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  const templateVars = { username: req.cookies['username'] }
+  res.render("urls_register", templateVars);
+});
+
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
-  res.redirect(`/urls/${id}`);
+  res.render(`/urls/${id}`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
