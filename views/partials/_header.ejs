@@ -20,8 +20,8 @@
     </div>
 
     <% if(username !== undefined && username !== '') { %>
+      <h5>Logged in as: <%= username %></h5>
       <form class="form-inline" action="/logout" method="POST">
-        <h4>Logged in as: <%= username %></h4>
         <button type="submit" class="btn btn-primary" style="background-color:transparent; border-color: black;">Logout</button>
       </form>
     <% } else { %>
