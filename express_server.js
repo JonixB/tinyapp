@@ -53,6 +53,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  console.log(users[req.cookies['user_id']]);
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render("urls_register", templateVars);
 });
