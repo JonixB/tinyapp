@@ -26,12 +26,12 @@ const users = {
   "aJ48lW": {
     id: "aJ48lW",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: "rBX6qMrhXDU68PWXdhEw",
   },
   "aXa8We": {
     id: "aXa8We",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: "dZlyUvUgf1qj2LKnH2PN",
   },
 };
 
