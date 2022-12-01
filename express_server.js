@@ -100,7 +100,7 @@ app.post("/urls", (req, res) => {
     res.status(200).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
   }
   const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
+  urlDatabase[id].longURL = req.body.longURL;
   res.render(`/urls/${id}`);
 });
 
@@ -112,7 +112,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
-  urlDatabase[id] = req.body.longURL;
+  urlDatabase[id].longURL = req.body.longURL;
   res.redirect(`/urls/`);
 });
 
@@ -147,7 +147,7 @@ app.post("/logout", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
-    const long = urlDatabase[req.params.id];
+    const long = urlDatabase[req.params.id].longURL;
     const templateVars = { id: req.params.id, longURL: long, user: users[req.cookies['user_id']]};
     res.render("urls_show", templateVars);
   }
@@ -156,7 +156,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
-    const longURL = urlDatabase[req.params.id]
+    const longURL = urlDatabase[req.params.id].longURL;
     res.redirect(longURL);
   }
   res.status(200).send("ID do not exist. Please enter a correct ID");
