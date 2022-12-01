@@ -43,10 +43,10 @@ const generateRandomString = () => {
   return RandomString;
 };
 
-const getUserByEmail = (email) => {
-  for (const user in users) {
-    if (email === users[user].email) {
-      return users[user];
+const getUserByEmail = (email, database) => {
+  for (const user in database) {
+    if (email === database[user].email) {
+      return database[user];
     }
   }
   return null;
@@ -104,7 +104,7 @@ app.post("/register", (req, res) => {
     res.status(400).send("Email or password cannot be empty");
   }
 
-  if (getUserByEmail(email) !== null) {
+  if (getUserByEmail(email, users) !== null) {
     res.status(400).send("Email is already in use. Please type a different email");
   }
 
@@ -166,15 +166,15 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if(getUserByEmail(email) === null) {
+  if(getUserByEmail(email, users) === null) {
     res.status(403).send("Incorrect email");
   }
 
-  if (bcrypt.compareSync(password, getUserByEmail(email).password) !== true) {
+  if (bcrypt.compareSync(password, getUserByEmail(email, users).password) !== true) {
     res.status(403).send("Incorrect password");
   }
   
-  req.session.user_id = getUserByEmail(email).id;
+  req.session.user_id = getUserByEmail(email, users).id;
   res.redirect(`/urls`);
 });
 
