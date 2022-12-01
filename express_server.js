@@ -71,11 +71,11 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   if (email === '' || password === '') {
-    res.send(400, "Email or password cannot be empty");
+    res.status(400).send("Email or password cannot be empty");
   }
 
   if (getUserByEmail(email) !== null) {
-    res.send(400, "Email is already in use. Please type a different email");
+    res.status(400).send("Email is already in use. Please type a different email");
   }
   users[id] = { id: id, email: email, password: password };
 
@@ -111,11 +111,11 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
 
   if(getUserByEmail(email) === null) {
-    res.send(403, "Incorrect email");
+    res.status(403).send("Incorrect email");
   }
 
   if(getUserByEmail(email).password !== password) {
-    res.send(403, "Incorrect password");
+    res.status(403).send("Incorrect password");
   }
 
   res.cookie('user_id', getUserByEmail(email).id);
