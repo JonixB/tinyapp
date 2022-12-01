@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require("cookie-parser");
-const bcrypt = require('brcryptjs');
+const bcrypt = require('bcryptjs');
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -104,8 +104,8 @@ app.post("/register", (req, res) => {
   if (getUserByEmail(email) !== null) {
     res.status(400).send("Email is already in use. Please type a different email");
   }
-  users[id] = { id: id, email: email, password: hashedPassword };
 
+  users[id] = { id: id, email: email, password: hashedPassword };
   res.cookie('user_id', id);
   res.redirect("/urls");
 });
@@ -167,10 +167,10 @@ app.post("/login", (req, res) => {
     res.status(403).send("Incorrect email");
   }
 
-  if(getUserByEmail(email).password !== password) {
+  if (bcrypt.compareSync(password, getUserByEmail(email).password) !== true) {
     res.status(403).send("Incorrect password");
   }
-
+  
   res.cookie('user_id', getUserByEmail(email).id);
   res.redirect(`/urls`);
 });
