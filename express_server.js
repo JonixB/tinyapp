@@ -18,12 +18,12 @@ const urlDatabase = {
 };
 
 const users = {
-  userRandomID: {
+  "aJ48lW": {
     id: "aJ48lW",
     email: "user@example.com",
     password: "purple-monkey-dinosaur",
   },
-  user2RandomID: {
+  "aXa8We": {
     id: "aXa8We",
     email: "user2@example.com",
     password: "dishwasher-funk",
@@ -48,6 +48,16 @@ const getUserByEmail = (email) => {
   return null;
 };
 
+const urlsForUser = (id) => {
+  const filteredURLS = {};
+  for (const url in urlDatabase) {
+    if (id === urlDatabase[url].userID) {
+      filteredURLS[url] = { longURL: urlDatabase[url].longURL };
+    }
+  }
+  return filteredURLS;
+};
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -58,7 +68,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
+  if (req.cookies['user_id'] === undefined) {
+    res.status(200).send("Please login to view the URLS");
+  }
+
+  console.log(req.cookies['user_id']);
+  const templateVars = { urls: urlsForUser(req.cookies['user_id']), user: users[req.cookies['user_id']] };
   res.render("urls_index", templateVars);
 });
 
