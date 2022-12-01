@@ -140,14 +140,20 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const long = urlDatabase[req.params.id];
-  const templateVars = { id: req.params.id, longURL: long, user: users[req.cookies['user_id']]};
-  res.render("urls_show", templateVars);
+  if (req.params.id in urlDatabase) {
+    const long = urlDatabase[req.params.id];
+    const templateVars = { id: req.params.id, longURL: long, user: users[req.cookies['user_id']]};
+    res.render("urls_show", templateVars);
+  }
+  res.status(200).send("ID do not exist. Please enter a correct ID");
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]
-  res.redirect(longURL);
+  if (req.params.id in urlDatabase) {
+    const longURL = urlDatabase[req.params.id]
+    res.redirect(longURL);
+  }
+  res.status(200).send("ID do not exist. Please enter a correct ID");
 });
 
 app.listen(PORT, () => {
