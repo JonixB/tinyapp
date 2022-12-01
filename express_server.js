@@ -45,7 +45,7 @@ const getUserByEmail = (email) => {
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  if(!req.cookies['username']) {
+  if(!req.cookies['user_id']) {
     res.redirect(`/urls`);
   }
   res.redirect(`/login`);
@@ -109,13 +109,24 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if(getUserByEmail(email) === null) {
+    res.send(403, "Incorrect email");
+  }
+
+  if(getUserByEmail(email).password !== password) {
+    res.send(403, "Incorrect password");
+  }
+
+  res.cookie('user_id', getUserByEmail(email).id);
   res.redirect(`/urls`);
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
-  res.redirect(`/urls`);
+  res.redirect(`/login`);
 });
 
 app.get("/urls/:id", (req, res) => {
