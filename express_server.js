@@ -57,7 +57,8 @@ const urlsForUser = (id) => {
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  if(!req.session.user_id) {
+  console.log(!req.session.user_id)
+  if(req.session.user_id !== undefined) {
     res.redirect(`/urls`);
   }
   res.redirect(`/login`);
