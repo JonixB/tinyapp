@@ -75,8 +75,6 @@ app.post("/register", (req, res) => {
   }
 
   if (getUserByEmail(email) !== null) {
-    // res.statusMessage = "Email is already in use. Please type a different email";
-    // res.status(400).end();
     res.send(400, "Email is already in use. Please type a different email");
   }
   users[id] = { id: id, email: email, password: password };
