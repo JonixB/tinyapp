@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require("cookie-parser");
+const bcrypt = require('brcryptjs');
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -71,8 +72,6 @@ app.get("/urls", (req, res) => {
   if (req.cookies['user_id'] === undefined) {
     res.status(200).send("Please login to view the URLS");
   }
-
-  console.log(req.cookies['user_id']);
   const templateVars = { urls: urlsForUser(req.cookies['user_id']), user: users[req.cookies['user_id']] };
   res.render("urls_index", templateVars);
 });
@@ -97,6 +96,7 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === '' || password === '') {
     res.status(400).send("Email or password cannot be empty");
   }
@@ -104,7 +104,7 @@ app.post("/register", (req, res) => {
   if (getUserByEmail(email) !== null) {
     res.status(400).send("Email is already in use. Please type a different email");
   }
-  users[id] = { id: id, email: email, password: password };
+  users[id] = { id: id, email: email, password: hashedPassword };
 
   res.cookie('user_id', id);
   res.redirect("/urls");
