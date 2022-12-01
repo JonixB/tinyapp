@@ -57,16 +57,19 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+  if (req.cookies['user_id'] === undefined) {
+    res.redirect(`/login`);
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render("urls_new", templateVars);
 });
 
 app.get("/register", (req, res) => {
-  if (req.cookies['user_id']) {
-    res.redirect(`/urls/`);
+  if (req.cookies['user_id'] === undefined) {
+    const templateVars = { user: users[req.cookies['user_id']] };
+    res.render("urls_register", templateVars);
   }
-  const templateVars = { user: users[req.cookies['user_id']] };
-  res.render("urls_register", templateVars);
+  res.redirect(`/urls/`);
 });
 
 app.post("/register", (req, res) => {
@@ -87,6 +90,9 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  if (req.cookies['user_id'] === undefined) {
+    res.status(200).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
+  }
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
   res.render(`/urls/${id}`);
@@ -105,11 +111,11 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (req.cookies['user_id']) {
-    res.redirect(`/urls/`);
+  if (req.cookies['user_id'] === undefined) {
+    const templateVars = { user: users[req.cookies['user_id']] };
+    res.render(`urls_login`, templateVars);
   }
-  const templateVars = { user: users[req.cookies['user_id']] };
-  res.render(`urls_login`, templateVars);
+  res.redirect(`/urls/`);
 });
 
 app.post("/login", (req, res) => {
