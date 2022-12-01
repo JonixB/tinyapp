@@ -115,8 +115,8 @@ app.post("/urls", (req, res) => {
     res.status(200).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
   }
   const id = generateRandomString();
-  urlDatabase[id].longURL = req.body.longURL;
-  res.render(`/urls/${id}`);
+  urlDatabase[id] = { longURL: req.body.longURL, userID: req.cookies['user_id'] };
+  res.redirect(`/urls/${id}`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
