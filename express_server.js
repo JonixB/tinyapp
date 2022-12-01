@@ -120,15 +120,35 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const id = req.params.id;
-  delete urlDatabase[id];
-  res.redirect(`/urls/`);
+  if (req.params.id in urlDatabase) {
+    if (req.cookies['user_id'] === undefined) {
+      res.status(200).send("Please log in to view this URL");
+    }
+
+    if (req.cookies['user_id'] !== urlDatabase[req.params.id].userID) {
+      res.status(200).send("You do not have access to this URL");
+    }
+    const id = req.params.id;
+    delete urlDatabase[id];
+    res.redirect(`/urls/`);
+  }
+  res.status(200).send("ID do not exist. Please enter a correct ID");
 });
 
 app.post("/urls/:id", (req, res) => {
-  const id = req.params.id;
-  urlDatabase[id].longURL = req.body.longURL;
-  res.redirect(`/urls/`);
+  if (req.params.id in urlDatabase) {
+    if (req.cookies['user_id'] === undefined) {
+      res.status(200).send("Please log in to view this URL");
+    }
+
+    if (req.cookies['user_id'] !== urlDatabase[req.params.id].userID) {
+      res.status(200).send("You do not have access to this URL");
+    }
+    const id = req.params.id;
+    urlDatabase[id].longURL = req.body.longURL;
+    res.redirect(`/urls/`);
+  }
+  res.status(200).send("ID do not exist. Please enter a correct ID");
 });
 
 app.get("/login", (req, res) => {
@@ -162,6 +182,13 @@ app.post("/logout", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
+    if (req.cookies['user_id'] === undefined) {
+      res.status(200).send("Please log in to view this URL");
+    }
+
+    if (req.cookies['user_id'] !== urlDatabase[req.params.id].userID) {
+      res.status(200).send("You do not have access to this URL");
+    }
     const long = urlDatabase[req.params.id].longURL;
     const templateVars = { id: req.params.id, longURL: long, user: users[req.cookies['user_id']]};
     res.render("urls_show", templateVars);
