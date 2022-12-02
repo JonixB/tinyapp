@@ -67,7 +67,7 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   if (req.session.user_id === undefined) {
-    return res.status(403).send("Please login to view the URLS");
+    return res.status(401).send("Please login to view the URLS");
   }
   const templateVars = { urls: urlsForUser(req.session.user_id), user: users[req.session.user_id] };
   res.render("urls_index", templateVars);
@@ -109,7 +109,7 @@ app.post("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   if (req.session.user_id === undefined) {
-    return res.status(403).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
+    return res.status(401).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
   }
   const id = generateRandomString();
   urlDatabase[id] = { longURL: req.body.longURL, userID: req.session.user_id };
@@ -119,7 +119,7 @@ app.post("/urls", (req, res) => {
 app.delete("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      return res.status(403).send("Please log in to view this URL");
+      return res.status(401).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
@@ -135,7 +135,7 @@ app.delete("/urls/:id", (req, res) => {
 app.put("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      return res.status(403).send("Please log in to view this URL");
+      return res.status(401).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
@@ -180,7 +180,7 @@ app.post("/logout", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      return res.status(403).send("Please log in to view this URL");
+      return res.status(401).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
@@ -198,7 +198,7 @@ app.get("/u/:id", (req, res) => {
     const longURL = urlDatabase[req.params.id].longURL;
     return res.redirect(longURL);
   }
-  res.status(403).send("ID do not exist. Please enter a correct ID");
+  res.status(400).send("ID do not exist. Please enter a correct ID");
 });
 
 app.listen(PORT, () => {
