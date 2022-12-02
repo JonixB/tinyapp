@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
 const { getUserByEmail } = require('./helpers.js');
+const methodOverride = require('method-override');
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -11,6 +12,8 @@ app.use(cookieSession({
   name: 'session',
   keys: ['vSSalErXAFaJ48lWaXa8We']
 }));
+
+app.use(methodOverride('_method'));
 
 const urlDatabase = {
   "b2xVn2": {
@@ -113,7 +116,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
       res.status(200).send("Please log in to view this URL");
@@ -129,7 +132,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.status(200).send("ID do not exist. Please enter a correct ID");
 });
 
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
       res.status(200).send("Please log in to view this URL");
