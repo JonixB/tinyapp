@@ -60,14 +60,14 @@ const urlsForUser = (id) => {
 
 app.get("/", (req, res) => {
   if (req.session.user_id !== undefined) {
-    res.redirect(`/urls`);
+    return res.redirect(`/urls`);
   }
   res.redirect(`/login`);
 });
 
 app.get("/urls", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.status(200).send("Please login to view the URLS");
+    return res.status(403).send("Please login to view the URLS");
   }
   const templateVars = { urls: urlsForUser(req.session.user_id), user: users[req.session.user_id] };
   res.render("urls_index", templateVars);
@@ -75,7 +75,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.redirect(`/login`);
+    return res.redirect(`/login`);
   }
   const templateVars = { user: users[req.session.user_id] };
   res.render("urls_new", templateVars);
@@ -84,7 +84,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/register", (req, res) => {
   if (req.session.user_id === undefined) {
     const templateVars = { user: users[req.session.user_id] };
-    res.render("urls_register", templateVars);
+    return res.render("urls_register", templateVars);
   }
   res.redirect(`/urls/`);
 });
@@ -95,11 +95,11 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === '' || password === '') {
-    res.status(400).send("Email or password cannot be empty");
+    return res.status(400).send("Email or password cannot be empty");
   }
 
   if (getUserByEmail(email, users) !== null) {
-    res.status(400).send("Email is already in use. Please type a different email");
+    return res.status(400).send("Email is already in use. Please type a different email");
   }
 
   users[id] = { id: id, email: email, password: hashedPassword };
@@ -109,7 +109,7 @@ app.post("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.status(200).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
+    return res.status(403).send("Only logged in users are allowed to shorten URLs. Please log in to use this feature.");
   }
   const id = generateRandomString();
   urlDatabase[id] = { longURL: req.body.longURL, userID: req.session.user_id };
@@ -119,39 +119,39 @@ app.post("/urls", (req, res) => {
 app.delete("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      res.status(200).send("Please log in to view this URL");
+      return res.status(403).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
-      res.status(200).send("You do not have access to this URL");
+      return res.status(403).send("You do not have access to this URL");
     }
     const id = req.params.id;
     delete urlDatabase[id];
-    res.redirect(`/urls/`);
+    return res.redirect(`/urls/`);
   }
-  res.status(200).send("ID do not exist. Please enter a correct ID");
+  res.status(400).send("ID do not exist. Please enter a correct ID");
 });
 
 app.put("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      res.status(200).send("Please log in to view this URL");
+      return res.status(403).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
-      res.status(200).send("You do not have access to this URL");
+      return res.status(403).send("You do not have access to this URL");
     }
     const id = req.params.id;
     urlDatabase[id].longURL = req.body.longURL;
-    res.redirect(`/urls/`);
+    return res.redirect(`/urls/`);
   }
-  res.status(200).send("ID do not exist. Please enter a correct ID");
+  res.status(400).send("ID do not exist. Please enter a correct ID");
 });
 
 app.get("/login", (req, res) => {
   if (req.session.user_id === undefined) {
     const templateVars = { user: users[req.session.user_id] };
-    res.render(`urls_login`, templateVars);
+    return res.render(`urls_login`, templateVars);
   }
   res.redirect(`/urls/`);
 });
@@ -161,11 +161,11 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
 
   if (getUserByEmail(email, users) === null) {
-    res.status(403).send("Incorrect email");
+    return res.status(400).send("Incorrect email");
   }
 
   if (bcrypt.compareSync(password, getUserByEmail(email, users).password) !== true) {
-    res.status(403).send("Incorrect password");
+    return res.status(400).send("Incorrect password");
   }
   
   req.session.user_id = getUserByEmail(email, users).id;
@@ -180,25 +180,25 @@ app.post("/logout", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     if (req.session.user_id === undefined) {
-      res.status(200).send("Please log in to view this URL");
+      return res.status(403).send("Please log in to view this URL");
     }
 
     if (req.session.user_id !== urlDatabase[req.params.id].userID) {
-      res.status(200).send("You do not have access to this URL");
+      return res.status(403).send("You do not have access to this URL");
     }
     const long = urlDatabase[req.params.id].longURL;
     const templateVars = { id: req.params.id, longURL: long, user: users[req.session.user_id]};
-    res.render("urls_show", templateVars);
+    return res.render("urls_show", templateVars);
   }
-  res.status(200).send("ID do not exist. Please enter a correct ID");
+  res.status(400).send("ID do not exist. Please enter a correct ID");
 });
 
 app.get("/u/:id", (req, res) => {
   if (req.params.id in urlDatabase) {
     const longURL = urlDatabase[req.params.id].longURL;
-    res.redirect(longURL);
+    return res.redirect(longURL);
   }
-  res.status(200).send("ID do not exist. Please enter a correct ID");
+  res.status(403).send("ID do not exist. Please enter a correct ID");
 });
 
 app.listen(PORT, () => {
