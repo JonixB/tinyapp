@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const { getUserByEmail } = require('./helpers.js');
 
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
   keys: ['vSSalErXAFaJ48lWaXa8We']
@@ -54,11 +55,8 @@ const urlsForUser = (id) => {
   return filteredURLS;
 };
 
-app.use(express.urlencoded({ extended: true }));
-
 app.get("/", (req, res) => {
-  console.log(!req.session.user_id)
-  if(req.session.user_id !== undefined) {
+  if (req.session.user_id !== undefined) {
     res.redirect(`/urls`);
   }
   res.redirect(`/login`);
@@ -159,7 +157,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if(getUserByEmail(email, users) === null) {
+  if (getUserByEmail(email, users) === null) {
     res.status(403).send("Incorrect email");
   }
 
